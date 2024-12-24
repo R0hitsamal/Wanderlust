@@ -1,0 +1,42 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+  <div class="row">
+    <div class="col-sm-10 col-md-8 offset-sm-1 offset-md-2">
+      <h2 class="mt-2 md-3">Listing details</h2>
+      <div class="card">
+        <img
+          class="card-img-top"
+          src="<%= details.image %>"
+          alt="Card image cap"
+          style="height: 61vh"
+        />
+        <div class="card-body ms-lg-5">
+          <b
+            ><p class="card-text mt-1 offset-3 offset-lg-4">
+              <%= details.title %>
+            </p></b
+          >
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-10 col-md-8 offset-sm-1 offset-md-2 mb-1">
+      <p class="card-text">
+        <%= details.description %><br />
+        <i id="rupee-sign" class="fa-solid fa-indian-rupee-sign"></i> <%=
+        details.price.toLocaleString("en-IN")%>/night <br/>
+        <%= details.location%>, <%= details.country %>
+      </p>
+    </div>
+  </div>
+  <div class="btns col-sm-10 col-md-8 offset-sm-1 offset-md-2 mb-3">
+    <form action="http://localhost:6060/listings/<%= details._id %>/edit">
+      <button class="btn pe-4 ps-4">Edit</button>
+    </form>
+    <form
+      method="post"
+      action="http://localhost:6060/listings/<%= details._id %>?_method=DELETE"
+    >
+      <button class="btn pe-3 ps-3">Delete</button>
+    </form>
+  </div>
+</body>

@@ -1,0 +1,26 @@
+<% layout("/layouts/boilerplate.ejs") %>
+<body>
+  <h1 class="mt-2">All Listing</h1>
+  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+    <% for( let d of data) { %>
+    <a class="card-link" href="http://localhost:6060/listings/<%= d._id %>">
+      <div class="card">
+        <img
+          class="card-img-top"
+          src="<%= d.image %>"
+          alt="Card image cap"
+          style="height: 20rem"
+        />
+        <div class="card-img-overlay"></div>
+        <div class="card-body">
+          <p>
+            <b> <%= d.title %><br /></b>
+            <i id="rupee-sign" class="fa-solid fa-indian-rupee-sign"></i> <%=
+            d.price.toLocaleString("en-IN")%>/night
+          </p>
+        </div>
+      </div>
+      <% } %>
+    </a>
+  </div>
+</body>
