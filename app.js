@@ -35,6 +35,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended: true}));
 
 var methodOverride = require("method-override");
+const { index } = require("./controller/listings.js");
 app.use(methodOverride("_method"));
 app.use(express.json());
 
@@ -103,9 +104,7 @@ app.use((req,res,next)=>{
   next();
 })
 
-// app.get("/",(req,res) =>{
-//   res.send("Home Page")
-// })
+app.get("/", wrapAsync(index));
 
 // All listings Route
 app.use("/listings", listings);
