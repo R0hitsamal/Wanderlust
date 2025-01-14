@@ -1,9 +1,14 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const express = require("express");
 const app = express();
-
+const dbUrl = process.env.ATLASDB_URL;
 const mongoose = require("mongoose");
 
-const Listing = require("./models/listing");
+const listings = require("./routes/listings.js");
+const reviews = require("./routes/review.js");
+const user = require("./routes/user.js");
 
 const ejsMate = require("ejs-mate");
 
@@ -11,7 +16,16 @@ const wrapAsync = require("./utils/wrapAsync.js");
 
 const ExpressError = require("./utils/expressError.js");
 
-const listingSchema = require("./joiSchema.js");
+const cookieParser = require("cookie-parser");
+
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+
+const flash = require("connect-flash");
+
+const passport = require("passport");
+const Localstrategy = require("passport-local");
+const User = require("./models/user.js");
 
 const path = require("path");
 app.set("view engine", "ejs");
@@ -34,137 +48,74 @@ main()
     console.log(err);
   });
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/Wanderlust");
+  await mongoose.connect(dbUrl);
 }
-// Home
-app.get(
-  "/",
-  wrapAsync(async (req, res) => {
-    res.send("Home Page");
-  })
-);
 
-// Listing
-app.get(
-  "/listings",
-  wrapAsync(async (req, res) => {
-    const data = await Listing.find();
-    res.render("listings/index", {data});
-  })
-);
-// new
-app.get("/listings/new", (req, res) => {
-  res.render("listings/new");
-});
-app.post(
-  "/listings",
-  wrapAsync(async (req, res, next) => {
-    // let {title, image, description, price, location, country} = req.body;
-    let result =  await listingSchema.validateAsync(req.body)
-    if (result.error) {
-      return(new ExpressError(400, result.error));
-    }
-    // if (!title) {
-    //   return next(new ExpressError(400, "Title is required"));
-    // }
-    // if (!description) {
-    //   return next(new ExpressError(400, "Description is required"));
-    // }
-    // if (!price) {
-    //   return next(new ExpressError(400, "Price is required"));
-    // }
-    // if (!location) {
-    //   return next(new ExpressError(400, "Location is required"));
-    // }
-    // if (!country) {
-    //   return next(new ExpressError(400, "Country is required"));
-    // }
-    // if (!image) {
-    //   return next(new ExpressError(400, "Image url is required"));
-    // }
-    // await Listing.create({
-    //   title: title,
-    //   image: image,
-    //   description: description,
-    //   price: price,
-    //   location: location,
-    //   country: country,
-    // });
-    await Listing.create(req.body);
-    res.redirect("/listings");
-  })
-);
+const store = MongoStore.create({
+  mongoUrl : dbUrl,
+  crypto : {
+    secret : "secretcode"
+  },
+  touchAfter : 24 * 60 * 60
+})
 
-// Details
-app.get(
-  "/listings/:id",
-  wrapAsync(async (req, res, next) => {
-    const {id} = req.params;
+store.on("error", (e)=>{
+  console.log("Session Error", e)
+})
 
-    // Fetch the specific listing by ID
-    const details = await Listing.findById(id);
+const sessionOption = {
+  store,
+  secret: "secretcode",
+  resave: false,
+  saveUninitialized: true,
+  cookie:{
+    expires : Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge : 7 * 24 * 60 * 60 * 1000,
+    httpOnly : true
+  }
+};
 
-    // If no listing is found, throw a 404 error
-    if (!details) {
-      return next(new ExpressError(404, "Listing not found"));
-    }
-    // Render the details view with the fetched data
-    res.render("listings/show", {details});
-  })
-);
 
-// update
-app.get(
-  "/listings/:id/edit",
-  wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    // Fetch the specific listing by ID
-    const details = await Listing.findById(id);
+app.use(session(sessionOption));
+app.use(flash());
+app.use(cookieParser("secretcode"));
 
-    // If no listing is found, throw a 404 error
-    if (!details) {
-      return next(new ExpressError(404, "Listing not found"));
-    }
-    res.render("listings/edit", {details});
-  })
-);
-app.patch(
-  "/listings/:id",
-  wrapAsync(async (req, res, next) => {
-    let {id} = req.params;
-    let {title, img, description, price, location, country} = req.body;
-    console.log(req.body);
-    let result = await listingSchema.validateAsync(req.body);
-    if (result.error) {
-      return(new ExpressError(400, result.error));    
-    }
-    await Listing.updateOne(
-      {_id: id},
-      {
-        $set: {
-          title: title,
-          img: img,
-          description: description,
-          price: price,
-          location: location,
-          country: country,
-        },
-      },
-      {upsert: true}
-    )
-    res.redirect(`/listings/${id}`);
-  })
-);
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new Localstrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
 
-// Delete
-app.delete(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    let {id} = req.params;
-    await Listing.deleteOne({_id: id});
-    res.redirect("/listings");
-  })
-);
+// app.get("/demouser", async (req,res)=>{
+//   let fakeUser = new User({
+//     email : "sama@gmail.com",
+//     username : "Rohit Samal"
+//   });
+
+//   let newUser = await User.register(fakeUser, "rohit123");
+//   res.send(newUser);
+// });
+
+app.use((req,res,next)=>{
+  res.locals.flash = req.flash("flash")
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+  next();
+})
+
+// app.get("/",(req,res) =>{
+//   res.send("Home Page")
+// })
+
+// All listings Route
+app.use("/listings", listings);
+
+// Review Route
+app.use("/listings/:id/reviews", reviews);
+
+// Signup
+app.use("/",user);
+
 
 app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page not found"));
@@ -173,10 +124,11 @@ app.all("*", (req, res, next) => {
 //middleware
 app.use((err, req, res, next) => {
   let {status = 500, message = "Something went wrong"} = err;
-  console.log(err);
+  console.log(err)
   res.status(status).render("listings/error", {message});
 });
 
 app.listen(6060, () => {
   console.log("App is listining to 6060");
+  console.log("http://localhost:6060/listings");
 });

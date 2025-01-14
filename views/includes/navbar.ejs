@@ -1,6 +1,20 @@
+<style></style>
+
 <nav class="navbar navbar-expand-sm bg-white sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
+    <a class="navbar-brand ms-4" href="/listings"
+      ><i class="fa-regular fa-compass"></i
+    ></a>
+    <div class="navbar-toggler search-bar-box form-group navbar-nav">
+      <input
+        class="form-control border-3 search-bar"
+        type="search"
+        placeholder="Search destination"
+      />
+      <button class="btn search-btn">
+        <i class="fa-solid fa-magnifying-glass"></i>Search
+      </button>
+    </div>
     <button
       class="navbar-toggler"
       type="button"
@@ -14,9 +28,32 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="/">Home</a>
-        <a class="nav-link" href="http://localhost:6060/listings">All listing</a>
-        <a class="nav-link" href="http://localhost:6060/listings/new">Add new listing</a>
+        <a class="nav-link" href="http://localhost:6060/listings">Explore</a>
+      </div>
+      <div
+        class="d-none d-sm-flex gap-2 search-box form-group navbar-nav ms-auto"
+      >
+        <input
+          class="form-control border-3 search-bar"
+          type="search"
+          placeholder="Search destination"
+        />
+        <button class="btn search-btn">
+          <i class="fa-solid fa-magnifying-glass"></i>Search
+        </button>
+      </div>
+      <div class="navbar-nav ms-auto me-4">
+        <a class="nav-link" href="http://localhost:6060/listings/new"
+          >Add new Airbnb</a
+        >
+        <% if (!currUser) { %>
+        <a class="nav-link active" aria-current="page" href="/signup"
+          ><b>Sign up</b></a
+        >
+        <a class="nav-link" href="/login"><b>Log in</b></a>
+        <% } %> <% if (currUser) { %>
+        <a class="nav-link" href="/logout"><b>Log out</b></a>
+        <% } %>
       </div>
     </div>
   </div>

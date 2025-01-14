@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const {type} = require("../JoiValidation/listingSchema.js");
+const Rating = require("./rating.js");
 
 const listingSchema = mongoose.Schema({
   title: {
@@ -9,11 +11,8 @@ const listingSchema = mongoose.Schema({
     type: String,
   },
   image: {
-    type: String,
-    set: (v) =>
-      v === " "
-        ? "https://a0.muscache.com/im/pictures/miso/Hosting-48666768/original/87789ac2-60e7-4a8f-998b-3ca0b690bf89.jpeg?im_w=1200&im_format=avif"
-        : v,
+    url : String,
+    filename : String,
   },
   price: {
     type: Number,
@@ -24,7 +23,24 @@ const listingSchema = mongoose.Schema({
   country: {
     type: String,
   },
+  rating: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "rating",
+    },
+  ],
+  owner : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }
 });
+
+listingSchema.post("findOneAndDelete", async (listing) => {
+  if (listing) {
+    await Rating.deleteMany({ _id : {$in : listing.rating}})
+  }
+});
+
 const Listing = mongoose.model("Listing", listingSchema);
 
 module.exports = Listing;

@@ -13,6 +13,10 @@ async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/Wanderlust");
 }
 
+// Listing.deleteMany({}).then(() => {
+//   console.log("Successfully deleted data");
+// })
+
 Listing.insertMany(initData.data).then(()=>{
   console.log("Successfully store data")
 }).catch((err)=>{

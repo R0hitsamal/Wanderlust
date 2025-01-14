@@ -74,7 +74,7 @@ body{
 #rupee-sign{
     font-size: 0.9rem;
 }
-.card{
+.listing-card{
     border: none !important;
     margin-bottom: 2rem;
 }
@@ -114,3 +114,60 @@ body{
     display: flex;
     justify-content: center;
 }
+.redstar{
+    color: rgb(255, 69, 69) !important;
+}
+.signup-link{
+    text-decoration: none;
+}
+.editImg{
+    height: auto;
+    width: 200px;
+}
+.search-bar-box{
+    border: none !important;
+   display: flex;
+   flex-direction: row;
+   gap: 3px;
+   width: 60vw;
+}
+.nav-link {
+    text-align: center;
+}
+.taxableAmt{
+    font-size: 0.9rem;
+    display: none;
+}
+.tax{
+   border: 3px solid #d8d8d8;
+   height: 53px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 4px 10px;
+   border-radius: 10px;
+}
+.taxText{
+    font-size: 0.9rem;
+}
+.search-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.search-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    height: 30px;
+    padding: 4px 14px;
+}
+.search-bar{
+    border-radius: 25px;
+    height: 35px;
+    padding: 4px 14px 4px 30px;
+    font-size: 0.9rem;
+ }
