@@ -54,18 +54,18 @@ async function main() {
 const store = MongoStore.create({
   mongoUrl : dbUrl,
   crypto : {
-    secret : "secretcode"
+    secret : process.env.SECRET
   },
   touchAfter : 24 * 60 * 60
 })
 
 store.on("error", (e)=>{
-  console.log("Session Error", e)
+  console.log("Mongo store Error", e)
 })
 
 const sessionOption = {
   store,
-  secret: "secretcode",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie:{
@@ -78,7 +78,7 @@ const sessionOption = {
 
 app.use(session(sessionOption));
 app.use(flash());
-app.use(cookieParser("secretcode"));
+app.use(cookieParser(process.env.SECRET));
 
 app.use(passport.initialize())
 app.use(passport.session())
