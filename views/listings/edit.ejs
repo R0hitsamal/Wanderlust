@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-8 offset-2">
     <h3 class="mt-3 mb-3">Edit Listing</h3>
-    <form class="needs-validation" novalidate method="post" action="http://localhost:6060/listings/<%= details.id %>?_method=PATCH" class="needs-validation" enctype="multipart/form-data">
+    <form class="needs-validation" novalidate method="post" action="/listings/<%= details.id %>?_method=PATCH" class="needs-validation" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input required id="title" value="<%= details.title %>" name="title" type="text" class="form-control border-3" />

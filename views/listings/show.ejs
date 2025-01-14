@@ -32,12 +32,12 @@
 
   <% if (currUser && currUser._id.equals(details.owner._id)) { %>
   <div class="btns col-sm-10 col-md-8 offset-sm-1 offset-md-2 mb-3">
-    <form action="http://localhost:6060/listings/<%= details._id %>/edit">
+    <form action="/listings/<%= details._id %>/edit">
       <button class="btn pe-4 ps-4">Edit</button>
     </form>
     <form
       method="post"
-      action="http://localhost:6060/listings/<%= details._id %>?_method=DELETE"
+      action="/listings/<%= details._id %>?_method=DELETE"
     >
       <button class="btn pe-3 ps-3">Delete</button>
     </form>
