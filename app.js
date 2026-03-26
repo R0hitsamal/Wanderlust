@@ -103,8 +103,10 @@ app.use((req,res,next)=>{
   res.locals.currUser = req.user;
   next();
 })
-
-app.get("/", wrapAsync(index));
+app.get("/", (req, res) => {
+  res.send("Server is running 🚀");
+});
+// app.get("/", wrapAsync(index));
 
 // All listings Route
 app.use("/listings", listings);
